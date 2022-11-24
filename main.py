@@ -332,6 +332,5 @@ with open('movies.json', 'w', encoding='utf-8') as file:
    
 
 pbar.close()
-print("")
-print("Download Complete!")
+print("\nDownload Complete!")
 

@@ -1,1 +1,1 @@
-This python script scrapes the IMBd and can download data and images for thousands of movies. 
+This python script scrapes the IMBd site and can download data and images for thousands of movies
