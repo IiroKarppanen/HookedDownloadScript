@@ -16,7 +16,7 @@ def get_urls(minVotes):
     url_list = []
     id_list = []
 
-    print("Preparing Download (1/3)")
+    print("Preparing Download (1/2)")
     pbar = tqdm(total=len(genres))
 
     def save_url(genre):

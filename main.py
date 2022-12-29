@@ -1,6 +1,5 @@
 from get_urls import get_urls
 from get_data import get_movies
-from get_images import get_images
 import os
 
 
@@ -29,11 +28,6 @@ id_list = result[1]
 os.system('cls')
 
 get_movies(url_list, len(id_list))
-
-# Download image urls
-os.system('cls')
-
-get_images(id_list)
 
 print("\nDownload Complete!")
 

@@ -16,7 +16,7 @@ def get_movies(url_list, movie_amount):
     json_list = []
     id_list = []
 
-    print("Downloading Movie Data (2/3)")
+    print("Downloading Movie Data (2/2)")
     pbar = tqdm(total=movie_amount) # Init pbar
 
     def iterateList(url):
@@ -101,6 +101,32 @@ def get_movies(url_list, movie_amount):
                     actors = movie.select('p')[-2].get_text().strip()
                     cast.append(actors.split("Stars:",1)[1].strip().replace('\n', ''))
                     cast = json.dumps(cast, ensure_ascii=False)
+
+                    #############################################################################################################
+
+                    url = 'https://www.imdb.com/title/' + str(id) + "/"
+
+                    resp = requests.get(url, headers=HEADERS)
+                    page = BeautifulSoup(resp.text, 'lxml')
+
+                    try:
+                        original_title = page.select('div.sc-dae4a1bc-0.gwBsXc')[0].text
+                        original_title = original_title.replace("Original title: ", "").strip()
+                    except:
+                        try:
+                            original_title = str(page.title.string[:-7])
+                        except:
+                            raise Exception
+
+                    original_title = original_title.split("(", 1)[0]
+                    poster_url = page.select('img.ipc-image')[0]['src']
+
+                    url2 = f'https://www.imdb.com/title/{id}/mediaviewer'
+                    resp = requests.get(url2, headers=HEADERS)
+
+                    page2 = BeautifulSoup(resp.text, 'lxml')
+                    image_url = str(page2.find_all('img')[1]['src'])
+                    
                                 
                     data = {
                         "movie_id": id,
@@ -117,19 +143,23 @@ def get_movies(url_list, movie_amount):
                         "kind": "movie",
                         "ep_count": 0,
                         "cast": cast,
+                        "title": original_title,
+                        "poster_url": poster_url,
+                        "image_url": image_url
                         }
                         
-                    json_list.append(data)
-                    id_list.append(id)
+                    if id not in id_list:
+                        json_list.append(data)
+                        id_list.append(id)
 
-                    # Save data to json file
-                    with open("movies.json", 'w', encoding='utf-8') as file:
-                        file.write(
-                            '[' +
-                            ',\n'.join(json.dumps(i, ensure_ascii=False) for i in json_list) +
-                            ']\n')
+                        # Save data to json file
+                        with open("movies.json", 'w', encoding='utf-8') as file:
+                            file.write(
+                                '[' +
+                                ',\n'.join(json.dumps(i, ensure_ascii=False) for i in json_list) +
+                                ']\n')
 
-                    pbar.update(n=1) 
+                        pbar.update(n=1) 
                 
             except Exception:
                 exc_type, exc_tb = sys.exc_info()
